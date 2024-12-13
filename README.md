@@ -9,7 +9,7 @@ There is also a function for generating noise based on a given line and download
 
 Dataset from file should be in the txt file and consists a pairs of numbers like:
 
-23 72
-41 12
-42 51
+23 72 <br>
+41 12 <br>
+42 51 <br>
 etc...
