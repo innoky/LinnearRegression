@@ -3,6 +3,11 @@
 You need to install OpenGL:
 
 <code>sudo apt install build-essential libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev</code>
+
+
+Compiling:
+
+<code>g++ linreg.cpp -o BLinreg -lGL -lGLU -lglut</code>
 _______
 C++ realization of linear regression and some other helpfull functions
 
