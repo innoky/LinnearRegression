@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <vector>
 #include <utility>
 #include <cstdlib>
@@ -6,7 +7,16 @@
 #include <fstream>
 #include <string>
 
+#include <cmath>
+#include <GL/glut.h>
 
+class Graph
+{
+public:
+  
+  
+  void BuildGraph(double k, double b){};
+};
 // Linear regression class
 class LinnearRegression 
 {
@@ -20,6 +30,8 @@ public:
 
   // Other
   std::vector<std::pair<double, double>> data_set;
+
+  std::vector<std::pair<double, double>> param_hist;
 
   // Empty counstructor without arguments
   LinnearRegression() {  };
@@ -60,7 +72,7 @@ public:
   void TrainModel(int Epoches)
   {
     // This value should be changed depending on the value in your dataset
-    const double RAND_WIDTH = 10000;
+    const double RAND_WIDTH = 1000;
     double tr_weight = (RAND_WIDTH / static_cast<double>(RAND_MAX)) * static_cast<double>(rand());
     double tr_bias = (RAND_WIDTH / static_cast<double>(RAND_MAX)) * static_cast<double>(rand());
     std::cout << "Начальный вес: " << tr_weight << " | Начальный сдвиг: " << tr_bias << std::endl;
@@ -85,13 +97,86 @@ public:
 
       tr_weight -= LearningRate * DerrByWeight;
       tr_bias -= LearningRate * DerrByBias;
-      
+      if (epo%100 == 0){
+        this->param_hist.emplace_back(tr_weight, tr_bias);
+      }
     }
     this->Weight = tr_weight;
     this->Bias = tr_bias;
   }
 };
 
+double b, k;
+int EpochLine = 0;
+LinnearRegression ln;
+
+void timer(int value)
+{
+  EpochLine+=1;
+  glutPostRedisplay();
+  glutTimerFunc(50, timer, 0);
+}
+
+void initGL() 
+{
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluOrtho2D(0, 1920, 0, 1080);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void display()
+{
+  const double CENTER_X = 1920/2;
+  const double CENTER_Y = 1080/2;
+  glClear(GL_COLOR_BUFFER_BIT);
+  glBegin(GL_LINES);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex2i(0,CENTER_Y);
+    glVertex2i(1920,CENTER_Y);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex2i(CENTER_X, 0);
+    glVertex2i(CENTER_X, 1080);
+  glEnd();
+  std::vector<std::pair<double, double>> p_hist =ln.param_hist;
+  double x_start = -CENTER_X; 
+  double x_end = CENTER_X;
+  for ( int i_epo = 0; i_epo < EpochLine; i_epo+=1)
+  {
+    //std::cout << "New line №" << EpochLine << std::endl;
+    
+    double y_start, y_end;
+    y_start = (ln.param_hist[i_epo].first) * x_start + ln.param_hist[i_epo].second; 
+    y_end = (ln.param_hist[i_epo].first) * x_end + ln.param_hist[i_epo].second;  
+    //k = 0.25;
+    //b = 60.13;
+    //y_start = (k) * x_start + b; 
+    //y_end = (k) * x_end + b;  
+     
+    glColor3f(0.0f, 0.0f, 1.0f); // Цвет линии (например, синий)
+    glBegin(GL_LINES);
+      glVertex2i(x_start + CENTER_X, CENTER_Y + y_start); // Начальная точка
+      glVertex2i(x_end + CENTER_X, CENTER_Y + y_end); // Конечная точка
+    glEnd(); 
+  }
+  double y_start_f, y_end_f;
+  y_start_f = (ln.Weight) * x_start + ln.Bias; 
+  y_end_f = (ln.Weight) * x_end + ln.Bias;  
+    //k = 0.25;
+    //b = 60.13;
+    //y_start = (k) * x_start + b; 
+    //y_end = (k) * x_end + b;  
+     
+    glColor3f(0.7f, 0.3f, 1.0f); // Цвет линии (например, синий)
+    glBegin(GL_LINES);
+      glVertex2i(x_start + CENTER_X, CENTER_Y + y_start_f); // Начальная точка
+      glVertex2i(x_end + CENTER_X, CENTER_Y + y_end_f); // Конечная точка
+    glEnd(); 
+
+
+  glutSwapBuffers();
+}
 // Noise generation function
 
 std::vector<std::pair<double, double>> GenLinData
@@ -119,21 +204,29 @@ std::vector<std::pair<double, double>> GenLinData
   return data;
 }
 
-int main(){
-  //auto dataset = GenLinData(0.24, 52.1, 15, 1.0, 0.0, 30);
 
-  LinnearRegression ln;
-  ln.ImportDataSet("test.txt");
+
+int main(int argc, char** argv){
+  auto dataset = GenLinData(0.24, 12.1, 15, 1.0, 0.0, 30);
+
+  //LinnearRegression ln;
+  ln.SetDataSet(dataset);
   ln.PrintDataSet();
+  ln.LearningRate = 0.001;
 
-  ln.LearningRate = 0.0001;
-
-  std::cout << ln.LearningRate << std::endl;
-
-  ln.TrainModel(10000000);
-
+  ln.TrainModel(1000000);
   std::cout << "Weight -> " << ln.Weight << " | Bias -> " << ln.Bias << std::endl;
 
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+  glutInitWindowSize(1920, 1080);
+  glutCreateWindow("Graph Builder");
+
+  initGL();
+
+  glutDisplayFunc(display);
+  glutTimerFunc(50, timer,0);
+  glutMainLoop();
   return 0;
 }
 
