@@ -154,10 +154,10 @@ void display()
     //y_start = (k) * x_start + b; 
     //y_end = (k) * x_end + b;  
      
-    glColor3f(0.0f, 0.0f, 1.0f); // Цвет линии (например, синий)
+    glColor3f(0.0f, 0.0f, 1.0f); 
     glBegin(GL_LINES);
-      glVertex2i(x_start + CENTER_X, CENTER_Y + y_start); // Начальная точка
-      glVertex2i(x_end + CENTER_X, CENTER_Y + y_end); // Конечная точка
+      glVertex2i(x_start + CENTER_X, CENTER_Y + y_start); // Start point
+      glVertex2i(x_end + CENTER_X, CENTER_Y + y_end); // End point
     glEnd(); 
   }
   double y_start_f, y_end_f;
@@ -170,8 +170,8 @@ void display()
      
     glColor3f(0.7f, 0.3f, 1.0f); // Цвет линии (например, синий)
     glBegin(GL_LINES);
-      glVertex2i(x_start + CENTER_X, CENTER_Y + y_start_f); // Начальная точка
-      glVertex2i(x_end + CENTER_X, CENTER_Y + y_end_f); // Конечная точка
+      glVertex2i(x_start + CENTER_X, CENTER_Y + y_start_f); // Start point
+      glVertex2i(x_end + CENTER_X, CENTER_Y + y_end_f); // End Point
     glEnd(); 
 
 
