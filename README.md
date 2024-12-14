@@ -1,4 +1,9 @@
 # LinnearRegression
+
+You need to install OpenGL:
+
+<code>sudo apt install build-essential libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev</code>
+_______
 C++ realization of linear regression and some other helpfull functions
 
 This repository contains an implementation of the linear regression class in C++. There are also plans to implement a class of multiple linear regression.
